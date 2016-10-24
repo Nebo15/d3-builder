@@ -18,6 +18,55 @@ describe('SVG namespace', () => {
     });
   });
 
+  describe('Line', () => {
+    it('should have namespace of area element', () => {
+      const a = builder.shape.line({
+        x: 0,
+        y: 0,
+      });
+      const lPipe = builder.svg.line(a);
+
+      expect(lPipe).have.property('path');
+      expect(lPipe).have.property('replace');
+      expect(lPipe).have.property('join');
+    });
+
+    it('should correct replace data', () => {
+      const l = builder.shape.line({
+        x: (d) => d.x,
+        y: (d) => d.y,
+      });
+      const lPipe = builder.svg.line(l);
+
+      lPipe.replace([{
+        x: 70,
+        y: 10,
+      }]);
+
+      expect(lPipe.path.node().getAttribute('d')).to.be.equal('M70,10Z');
+    });
+
+    it('should correct join data', () => {
+      const l = builder.shape.line({
+        x: (d) => d.x,
+        y: (d) => d.y,
+      });
+      const lPipe = builder.svg.line(l);
+
+      lPipe.replace([{
+        x: 70,
+        y: 10,
+      }]);
+
+      lPipe.join([[{
+        x: 80,
+        y: 42,
+      }]]);
+
+      expect(lPipe.path.node().getAttribute('d')).to.be.equal('M80,42Z');
+    });
+  });
+
   describe('Area', () => {
     it('should have namespace of area element', () => {
       const a = builder.shape.area({

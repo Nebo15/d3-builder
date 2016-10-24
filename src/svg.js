@@ -16,6 +16,32 @@ export default (parentNode, options) => {
     d3Node,
     svg,
 
+    line(l, datum = {}, options = {}) {
+      const path = parentGroup.append('path').datum(datum).attr('d', l);
+
+      const lineApi = {
+        path,
+        replace(datum = []) {
+          path.datum(datum).attr('d', l);
+
+          return lineApi;
+        },
+        update() {
+          return lineApi.replace.apply(lineApi, arguments);
+        },
+        join(data = [], key, options = {}) {
+          const passedPath = path.data(data, key);
+
+          passedPath.enter().append('path').merge(passedPath).attr('d', l);
+          passedPath.exit().remove();
+
+          return lineApi;
+        },
+      };
+
+      return lineApi;
+    },
+
     area(a, datum = [], options = {}) {
       const path = parentGroup.append('path').datum(datum).attr('d', a);
 
