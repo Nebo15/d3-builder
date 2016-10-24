@@ -4,6 +4,9 @@
   "description": "Builder for ambitious d3 charts",
   "main": "src/index.js",
   "scripts": {
+    "build": "webpack --module-bind 'js=babel' src/index.js dist/d3-builder.js",
+    "examples": "webpack --module-bind 'js=babel' examples/static/index.js examples/static/dist.js",
+    "prepublish": "npm run build",
     "test": "mocha",
     "test:watch": "mocha --watch"
   },
@@ -24,11 +27,15 @@
   "homepage": "https://github.com/Rastopyr/d3-builder#readme",
   "devDependencies": {
     "babel-core": "^6.17.0",
+    "babel-loader": "^6.2.5",
     "babel-preset-es2015": "^6.16.0",
     "babel-preset-stage-0": "^6.16.0",
     "chai": "^3.5.0",
+    "express": "^4.14.0",
     "jsdom": "^9.8.0",
-    "mocha": "^3.1.2"
+    "mocha": "^3.1.2",
+    "rimraf": "^2.5.4",
+    "webpack": "^1.13.2"
   },
   "dependencies": {
     "d3": "^4.2.8"

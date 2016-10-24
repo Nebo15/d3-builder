@@ -18,12 +18,24 @@ const builder = d3Builder('chart');
 // or
 const builder = d3Builder(document.querySelector('chart'));
 
-builder.shape.area({
+const areaFN = builder.shape.area({
   x0: (d) => fn(d.propName),
   y0: (d) => fn(d.propName),
   x1: (d) => fn(d.propName),
   y1: (d) => fn(d.propName),
-  define: false,
-  context: builder.d3Node,
-})
+});
+
+const areaPipe = builder.svg.area(areaFn);
+
+areaPipe.update([
+  { propName: 20 }
+]);
+
+areaPipe.replace([
+  { propName: 40 }
+]);
+
+areaPipe.join([
+  [{ propName: 90 }]
+]);
 ```

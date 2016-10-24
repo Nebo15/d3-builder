@@ -38,6 +38,6 @@ describe('Main API', () => {
     const builder = d3Builder('body');
 
     expect(builder).have.property('svg');
-    expect(builder.svg.node()).to.be.an.instanceof(window.HTMLElement);
+    expect(builder.svg).to.be.a('object');
   });
 });
