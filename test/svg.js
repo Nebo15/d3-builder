@@ -15,6 +15,9 @@ describe('SVG namespace', () => {
 
       expect(builder.svg).have.property('parentGroup');
       expect(builder.svg).have.property('d3Node');
+      expect(builder.svg).have.property('areas');
+      expect(builder.svg).have.property('lines');
+      expect(builder.svg).have.property('axises');
     });
   });
 

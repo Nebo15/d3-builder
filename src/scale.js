@@ -19,7 +19,7 @@ const keysOfScales = [
 
 export default (parentNode) => {
   return {
-    scaleLinear: (options = {}) => scaleConstructor('scaleLinear', keysOfScales,options),
-    scaleTime: (options = {}) => scaleConstructor('scaleTime', keysOfScales, options),
+    linear: (options = {}) => scaleConstructor('scaleLinear', keysOfScales,options),
+    time: (options = {}) => scaleConstructor('scaleTime', keysOfScales, options),
   };
 };

@@ -10,8 +10,8 @@ describe('Scale', () => {
 
   it('should have related namespace with d3', () => {
     const keys = [
-      'scaleLinear',
-      'scaleTime',
+      'linear',
+      'time',
     ];
 
     keys.forEach((key) => {
@@ -23,14 +23,14 @@ describe('Scale', () => {
   describe('Scale Time', () => {
     it('should pass domain option', () => {
       const domain = [new Date(), new Date(2012, 1, 1)];
-      const scale = builder.scale.scaleTime({ domain });
+      const scale = builder.scale.time({ domain });
 
       expect(scale.domain()).to.be.eql(domain);
     });
 
     it('should pass range option', () => {
       const range = [0, Math.random()];
-      const scale = builder.scale.scaleTime({ range });
+      const scale = builder.scale.time({ range });
 
       expect(scale.range()).to.be.eql(range);
     });
@@ -39,14 +39,14 @@ describe('Scale', () => {
   describe('Scale Linear', () => {
     it('should pass domain option', () => {
       const domain = [0, Math.random()];
-      const scale = builder.scale.scaleLinear({ domain });
+      const scale = builder.scale.linear({ domain });
 
       expect(scale.domain()).to.be.eql(domain);
     });
 
     it('should pass range option', () => {
       const range = [0, Math.random()];
-      const scale = builder.scale.scaleLinear({ range });
+      const scale = builder.scale.linear({ range });
 
       expect(scale.range()).to.be.eql(range);
     });
