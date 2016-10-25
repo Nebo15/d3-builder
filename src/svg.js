@@ -45,13 +45,60 @@ export default (parentNode, options = {}) => {
     areas: [],
     lines: [],
     axises: [],
+    scales: [],
 
     update(data) {
+      return [ api.scales, api.areas, api.lines ].reduce((d, elems) => {
+        elems.reduce((d, elem) => {
+          elem.update(d);
 
+          return d;
+        }, d);
+
+        return d;
+      }, data);
     },
 
-    line: (t, datum = [], options = {}) => genApi(t, datum, options),
-    area: (t, datum = [], options = {}) => genApi(t, datum, options),
+    scale(t, options = {}) {
+      // api.scales.push(t);
+
+      const sApi = {
+        scale: t,
+        update(data) {
+          return Object.keys(options).reduce((scale, key) => {
+            if (t[key]) {
+              return t[key](options[key](data));
+            }
+
+            return t;
+          }, t);
+        }
+      };
+
+      api.scales.push(sApi);
+
+      return sApi;
+    },
+
+    axis(t) {
+      api.axises.push(t);
+
+      return parentGroup.append('g').call(scale);
+    },
+
+    line(t, datum = [], options = {}) {
+      const l = genApi(t, datum, options);
+      api.lines.push(l);
+
+      return l;
+    },
+
+    area(t, datum = [], options = {}) {
+      const l = genApi(t, datum, options);
+      api.lines.push(l);
+
+      return l;
+    },
   };
 
   return api;
