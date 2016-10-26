@@ -66,6 +66,10 @@
 
 	var _svg2 = _interopRequireDefault(_svg);
 
+	var _axis = __webpack_require__(5);
+
+	var _axis2 = _interopRequireDefault(_axis);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
@@ -73,12 +77,13 @@
 	exports.default = function (parent, options) {
 	  var parentNode = parent instanceof window.HTMLElement ? parent : document.querySelector(parent);
 
-	  var svgAPI = (0, _svg2.default)(parentNode);
+	  var svgAPI = (0, _svg2.default)(parentNode, options);
 
 	  var api = {
 	    svg: svgAPI,
 	    shape: (0, _shape2.default)(svgAPI.parentGroup),
-	    scale: (0, _scale2.default)(svgAPI.parentGroup)
+	    scale: (0, _scale2.default)(svgAPI.parentGroup),
+	    axis: (0, _axis2.default)(svgAPI.parentGroup)
 	  };
 
 	  return api;
@@ -16421,6 +16426,12 @@
 
 	var shapeConstructor = function shapeConstructor(name, options) {
 	  return Object.keys(options).reduce(function (shape, key) {
+	    if (key === 'attrs') {
+	      return options[key].reduce(function (s, attr) {
+	        return shape.attr(attr.key, attr.value);
+	      }, shape);
+	    }
+
 	    if (shape[key]) {
 	      return shape[key](options[key]);
 	    }
@@ -16458,10 +16469,8 @@
 
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
-	var scaleConstructor = function scaleConstructor(type, included, options) {
-	  return Object.keys(options).filter(function (name) {
-	    return included.indexOf(name) > -1;
-	  }).reduce(function (scale, key) {
+	var scaleConstructor = function scaleConstructor(type, options) {
+	  return Object.keys(options).reduce(function (scale, key) {
 	    if (scale[key]) {
 	      return scale[key](options[key]);
 	    }
@@ -16470,17 +16479,15 @@
 	  }, d3[type]());
 	};
 
-	var keysOfScales = ['domain', 'range'];
-
 	exports.default = function (parentNode) {
 	  return {
-	    scaleLinear: function scaleLinear() {
+	    linear: function linear() {
 	      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-	      return scaleConstructor('scaleLinear', keysOfScales, options);
+	      return scaleConstructor('scaleLinear', options);
 	    },
-	    scaleTime: function scaleTime() {
+	    time: function time() {
 	      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-	      return scaleConstructor('scaleTime', keysOfScales, options);
+	      return scaleConstructor('scaleTime', options);
 	    }
 	  };
 	};
@@ -16501,14 +16508,51 @@
 
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
-	exports.default = function (parentNode, options) {
+	exports.default = function (parentNode) {
+	  var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
 	  var d3Node = d3.select(parentNode);
 
 	  var svg = d3Node.insert(function () {
 	    return document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-	  });
+	  }).attr('width', options.width).attr('height', options.height);
 
 	  var parentGroup = svg.append('g');
+
+	  var genApi = function genApi(t) {
+	    var datum = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+	    var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+	    var path = parentGroup.append('path').datum(datum).attr('d', t);
+
+	    var api = {
+	      path: path,
+	      replace: function replace() {
+	        var datum = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+
+	        path.datum(datum).attr('d', t);
+
+	        return api;
+	      },
+	      update: function update() {
+	        return api.replace.apply(api, arguments);
+	      },
+	      join: function join() {
+	        var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+	        var key = arguments[1];
+	        var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+	        var passedPath = path.data(data, key);
+
+	        passedPath.enter().append('path').merge(passedPath).attr('d', t);
+	        passedPath.exit().remove();
+
+	        return api;
+	      }
+	    };
+
+	    return api;
+	  };
 
 	  var api = {
 	    parentNode: parentNode,
@@ -16516,42 +16560,111 @@
 	    d3Node: d3Node,
 	    svg: svg,
 
-	    area: function area(a) {
-	      var datum = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
-	      var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+	    areas: [],
+	    lines: [],
+	    axises: [],
+	    scales: [],
 
-	      var path = parentGroup.append('path').datum(datum).attr('d', a);
+	    update: function update(data) {
+	      return [api.scales, api.areas, api.lines].reduce(function (d, elems) {
+	        elems.reduce(function (d, elem) {
+	          elem.update(d);
 
-	      var areaApi = {
-	        path: path,
-	        replace: function replace() {
-	          var datum = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+	          return d;
+	        }, d);
 
-	          path.datum(datum).attr('d', a);
+	        return d;
+	      }, data);
+	    },
+	    scale: function scale(t) {
+	      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-	          return areaApi;
-	        },
-	        update: function update() {
-	          return areaApi.replace.apply(areaApi, arguments);
-	        },
-	        join: function join() {
-	          var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-	          var key = arguments[1];
+	      var sApi = {
+	        scale: t,
+	        update: function update(data) {
+	          return Object.keys(options).reduce(function (scale, key) {
+	            if (t[key]) {
+	              return t[key](options[key](data));
+	            }
 
-	          var passedPath = path.data(data, key);
-
-	          passedPath.enter().append('path').merge(passedPath).attr('d', a);
-	          passedPath.exit().remove();
-
-	          return areaApi;
+	            return t;
+	          }, t);
 	        }
 	      };
 
-	      return areaApi;
+	      api.scales.push(sApi);
+
+	      return sApi;
+	    },
+	    axis: function axis(t) {
+	      api.axises.push(t);
+
+	      return parentGroup.append('g').call(scale);
+	    },
+	    line: function line(t) {
+	      var datum = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+	      var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+	      var l = genApi(t, datum, options);
+	      api.lines.push(l);
+
+	      return l;
+	    },
+	    area: function area(t) {
+	      var datum = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+	      var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+	      var l = genApi(t, datum, options);
+	      api.lines.push(l);
+
+	      return l;
 	    }
 	  };
 
 	  return api;
+	};
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _d = __webpack_require__(1);
+
+	var d3 = _interopRequireWildcard(_d);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+	var axisConstructor = function axisConstructor(_ref) {
+	  var _ref$orient = _ref.orient;
+	  var orient = _ref$orient === undefined ? 'Left' : _ref$orient;
+
+	  var options = _objectWithoutProperties(_ref, ['orient']);
+
+	  return Object.keys(options).reduce(function (axis, key) {
+	    if (key === 'attrs') {
+	      return options[key].reduce(function (s, attr) {
+	        return shape.attr(attr.key, attr.value);
+	      }, shape);
+	    }
+
+	    if (axis[key]) {
+	      return axis[key](options[key]);
+	    }
+
+	    return axis;
+	  }, d3['axis' + orient.charAt(0).toUpperCase() + orient.slice(1)]());
+	};
+
+	exports.default = function (options) {
+	  return axisConstructor(options);
 	};
 
 /***/ }

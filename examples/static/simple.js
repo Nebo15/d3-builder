@@ -39,12 +39,12 @@ export default () => {
     rangeRound: [height, 0]
   }), { domain: priceRange });
 
-  // const aPipe = wrapper.area(builder.shape.area({
-  //   x: (d) => x.scale(d.date),
-  //   y0: height,
-  //   y1: (d) => y.scale(d.price),
-  //   curve: d3.curveStep,
-  // }));
+  const aPipe = wrapper.area(builder.shape.area({
+    x: (d) => x.scale(d.date),
+    y0: height,
+    y1: (d) => y.scale(d.price),
+    curve: d3.curveStep,
+  }));
 
   const lPipe = wrapper.line(builder.shape.line({
     x: (d) => x2.scale(d.date),
@@ -52,7 +52,7 @@ export default () => {
     curve: d3.curveStep,
   }));
 
-  // aPipe.path.attr('transform', `translate(${margin.left}, ${margin.top})`);
+  aPipe.path.attr('transform', `translate(${margin.left}, ${margin.top})`);
   lPipe.path.attr('transform', `translate(${margin.left}, ${margin.top})`);
 
   function type2(d) {

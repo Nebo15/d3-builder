@@ -60,8 +60,6 @@ export default (parentNode, options = {}) => {
     },
 
     scale(t, options = {}) {
-      // api.scales.push(t);
-
       const sApi = {
         scale: t,
         update(data) {
