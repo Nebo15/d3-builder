@@ -105,9 +105,18 @@ exports.default = function (parentNode) {
       return sApi;
     },
     axis: function axis(t) {
+      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+      var axisGroup = parentGroup.append('g');
       api.axises.push(t);
 
-      return parentGroup.append('g').call(scale);
+      if (options.attrs) {
+        options.attrs.reduce(function (g, attr) {
+          return g.attr(attr.key, attr.value);
+        }, axisGroup);
+      }
+
+      return axisGroup.call(t);
     },
     line: function line(t) {
       var datum = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];

@@ -84,10 +84,17 @@ export default (parentNode, options = {}) => {
       return sApi;
     },
 
-    axis(t) {
+    axis(t, options = {}) {
+      const axisGroup = parentGroup.append('g');
       api.axises.push(t);
 
-      return parentGroup.append('g').call(scale);
+      if (options.attrs) {
+        options.attrs.reduce((g, attr) =>{
+          return g.attr(attr.key, attr.value)
+        }, axisGroup);
+      }
+
+      return axisGroup.call(t);
     },
 
     line(t, datum = [], options = {}) {
