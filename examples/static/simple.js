@@ -39,6 +39,24 @@ export default () => {
     rangeRound: [height, 0]
   }), { domain: priceRange });
 
+  const yAxis = wrapper.axis(builder.axis.create(y.scale, {
+    orient: 'left',
+  }), {
+    attrs: [{
+      key: 'transform',
+      value: `translate(${margin.left}, ${margin.top})`
+    }],
+  });
+
+  const xAxis = wrapper.axis(builder.axis.create(x.scale, {
+    orient: 'bottom',
+  }), {
+    attrs: [{
+      key: 'transform',
+      value: `translate(${margin.left}, ${height + margin.top})`
+    }],
+  });
+
   const aPipe = wrapper.area(builder.shape.area({
     x: (d) => x.scale(d.date),
     y0: height,

@@ -116,6 +116,8 @@ exports.default = function (parentNode) {
         }, axisGroup);
       }
 
+      console.log(t);
+
       return axisGroup.call(t);
     },
     line: function line(t) {

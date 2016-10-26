@@ -12,7 +12,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
 
-var axisConstructor = function axisConstructor(_ref) {
+var axisConstructor = function axisConstructor(scale, _ref) {
   var _ref$orient = _ref.orient;
   var orient = _ref$orient === undefined ? 'Left' : _ref$orient;
 
@@ -24,11 +24,11 @@ var axisConstructor = function axisConstructor(_ref) {
     }
 
     return axis;
-  }, d3['axis' + orient.charAt(0).toUpperCase() + orient.slice(1)]());
+  }, d3['axis' + orient.charAt(0).toUpperCase() + orient.slice(1)](scale));
 };
 
 exports.default = function () {
-  return { create: function create(options) {
-      return axisConstructor(options);
+  return { create: function create(scale, options) {
+      return axisConstructor(scale, options);
     } };
 };
