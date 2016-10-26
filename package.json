@@ -1,6 +1,6 @@
 {
   "name": "d3-block",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Builder for ambitious d3 charts",
   "main": "src/index.js",
   "scripts": {

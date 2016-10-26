@@ -13,6 +13,12 @@ export default (parentNode, options = {}) => {
   const genApi = (t, datum = [], options = {}) => {
     const path = parentGroup.append('path').datum(datum).attr('d', t);
 
+    if (options.attrs) {
+      options.attrs.reduce((p, attr) =>{
+        return p.attr(attr.key, attr.value)
+      }, path);
+    }
+
     const api = {
       path,
       replace(datum = []) {
