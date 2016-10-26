@@ -74,7 +74,7 @@ exports.default = function (parentNode) {
     scales: [],
 
     update: function update(data) {
-      return [api.scales, api.areas, api.lines].reduce(function (d, elems) {
+      return [api.scales, api.areas, api.lines, api.axises].reduce(function (d, elems) {
         elems.reduce(function (d, elem) {
           elem.update(d);
 
@@ -108,15 +108,20 @@ exports.default = function (parentNode) {
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
       var axisGroup = parentGroup.append('g');
-      api.axises.push(t);
+
+      api.axises.push({
+        group: axisGroup,
+        axis: t,
+        update: function update() {
+          axisGroup.call(t);
+        }
+      });
 
       if (options.attrs) {
         options.attrs.reduce(function (g, attr) {
           return g.attr(attr.key, attr.value);
         }, axisGroup);
       }
-
-      console.log(t);
 
       return axisGroup.call(t);
     },

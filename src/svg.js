@@ -54,7 +54,7 @@ export default (parentNode, options = {}) => {
     scales: [],
 
     update(data) {
-      return [ api.scales, api.areas, api.lines ].reduce((d, elems) => {
+      return [ api.scales, api.areas, api.lines, api.axises ].reduce((d, elems) => {
         elems.reduce((d, elem) => {
           elem.update(d);
 
@@ -86,7 +86,14 @@ export default (parentNode, options = {}) => {
 
     axis(t, options = {}) {
       const axisGroup = parentGroup.append('g');
-      api.axises.push(t);
+
+      api.axises.push({
+        group: axisGroup,
+        axis: t,
+        update() {
+          axisGroup.call(t);
+        }
+      });
 
       if (options.attrs) {
         options.attrs.reduce((g, attr) =>{
