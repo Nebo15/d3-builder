@@ -4,7 +4,7 @@
   "description": "Builder for ambitious d3 charts",
   "main": "src/index.js",
   "scripts": {
-    "build": "webpack --module-bind 'js=babel' src/index.js dist/d3-builder.js",
+    "build": "babel --out-dir dist src",
     "examples": "webpack --module-bind 'js=babel' examples/static/index.js examples/static/dist.js",
     "prepublish": "npm run build",
     "test": "mocha",
