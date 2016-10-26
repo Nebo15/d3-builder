@@ -27,6 +27,8 @@ var axisConstructor = function axisConstructor(_ref) {
   }, d3['axis' + orient.charAt(0).toUpperCase() + orient.slice(1)]());
 };
 
-exports.default = function (options) {
-  return axisConstructor(options);
+exports.default = function () {
+  create: (function (options) {
+    return axisConstructor(options);
+  });
 };
