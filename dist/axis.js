@@ -28,7 +28,7 @@ var axisConstructor = function axisConstructor(_ref) {
 };
 
 exports.default = function () {
-  create: (function (options) {
-    return axisConstructor(options);
-  });
+  return { create: function create(options) {
+      return axisConstructor(options);
+    } };
 };

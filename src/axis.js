@@ -10,4 +10,4 @@ const axisConstructor = ({ orient = 'Left', ...options }) =>
     return axis;
   }, d3[`axis${orient.charAt(0).toUpperCase()}${orient.slice(1)}`]())
 
-export default () => { create: options => axisConstructor(options) };
+export default () => ({ create: options => axisConstructor(options) });
