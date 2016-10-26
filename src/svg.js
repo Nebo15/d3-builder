@@ -94,8 +94,6 @@ export default (parentNode, options = {}) => {
         }, axisGroup);
       }
 
-      console.log(t);
-
       return axisGroup.call(t);
     },
 
